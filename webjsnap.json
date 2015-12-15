@@ -25,6 +25,11 @@
         "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
         "initrd=/install/initrd.gz -- <enter>"
       ]
+	},
+	{
+	  "type": "docker",
+	  "image": "ubuntu",
+	  "export_path": "webjsnap-docker.tar"
 	}
   ],
 
