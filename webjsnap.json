@@ -1,0 +1,65 @@
+{
+  "builders": [
+	{
+	  "type": "vmware-iso",
+	  "iso_url": "http://releases.ubuntu.com/14.04.3/ubuntu-14.04.3-server-amd64.iso",
+	  "iso_checksum": "9e5fecc94b3925bededed0fdca1bd417",
+	  "iso_checksum_type": "md5",
+	  "ssh_username": "jsnap",
+	  "ssh_password": "jsnap",
+	  "ssh_wait_timeout": "20m",
+	  "http_directory" : "preseeds",
+      "http_port_min" : 9001,
+      "http_port_max" : 9001,
+	  "shutdown_command": "echo 'jsnap' | sudo -S shutdown -P now",
+	  "vm_name": "webjsnap-vmware",
+	  "output_directory": "webjsnap-vmware",
+      "boot_command": [
+        "<esc><esc><enter><wait>",
+        "/install/vmlinuz noapic ",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg ",
+        "debian-installer=en_US auto locale=en_US kbd-chooser/method=us ",
+        "hostname=webjsnap ",
+        "fb=false debconf/frontend=noninteractive ",
+        "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA ",
+        "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
+        "initrd=/install/initrd.gz -- <enter>"
+      ]
+	}
+  ],
+
+  "provisioners": [
+	{
+	  "type": "shell",
+	  "execute_command": "echo 'jsnap' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+	  "inline": [
+			"sudo apt-get update -y",
+			"sudo apt-get install nginx php5-fpm php5-cli php5-mcrypt git -y",
+			"cd ~",
+			"curl -sS https://getcomposer.org/installer | php",
+			"sudo mv composer.phar /usr/local/bin/composer",
+			"sudo mkdir -p /var/www/webjsnap",
+			"sudo git clone https://github.com/lamoni/webjsnap.git /var/www/webjsnap/",
+			"cd /var/www/webjsnap/",
+			"sudo rm -rf vendor/lamoni",
+			"composer update",
+			"php artisan cache:clear",
+			"composer dump-autoload",
+			"sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php5/fpm/php.ini",
+			"sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config",
+			"sudo php5enmod mcrypt",
+			"sudo service php5-fpm restart",
+			"sudo mkdir /var/www/.ssh",
+			"chmod -R 700 /var/www/.ssh",
+			"chown www-data /var/www/.ssh",
+			"mv NGINX.md /etc/nginx/sites-available/default",
+			"sudo service nginx restart",
+			"sudo echo '    StrictHostKeyChecking no' >> /etc/ssh/ssh_config",
+			"sudo echo '    UserKnownHostsFile=/dev/null' >> /etc/ssh/ssh_config",
+			"sudo chown -R :www-data /var/www/webjsnap",
+			"sudo chmod -R 775 /var/www/webjsnap/storage",
+			"sudo dpkg -i /var/www/webjsnap/jsnap_1.0-6_amd64.deb"
+	  	]
+	}
+  ]
+}
