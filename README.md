@@ -1,5 +1,5 @@
 #WebJSnap Packer
-This project houses a Packer template for building WebJSnap images.
+This project houses a Packer template for building WebJSnap images.  The actual codebase for WebJSnap can be found at https://github.com/lamoni/webjsnap
 
 #Currently Supported Builders
 - VMWare
