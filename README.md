@@ -3,11 +3,17 @@ This project houses a Packer template for building WebJSnap images.
 
 #Currently Supported Builders
 - VMWare
+- Docker
 
 # Instructions
 - To build a VMWare image
 ```
 packer build -only=vmware-iso webjsnap.json
+```
+
+- To build a Docker box
+```
+packer build -only=docker webjsnap.json
 ```
 
 # Usage
