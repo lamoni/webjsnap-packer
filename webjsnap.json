@@ -66,5 +66,13 @@
 			"sudo dpkg -i /var/www/webjsnap/jsnap_1.0-6_amd64.deb"
 	  	]
 	}
+  ],
+  "post-processors": [
+    [
+		{
+		  "type": "vagrant",
+		  "keep_input_artifact": true
+		}
+    ]
   ]
 }
