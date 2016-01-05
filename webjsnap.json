@@ -27,6 +27,33 @@
       ]
     },
     {
+      "type": "virtualbox-iso",
+      "guest_os_type": "Ubuntu_64",
+      "iso_url": "http://releases.ubuntu.com/14.04.3/ubuntu-14.04.3-server-amd64.iso",
+      "iso_checksum": "9e5fecc94b3925bededed0fdca1bd417",
+      "iso_checksum_type": "md5",
+      "ssh_username": "jsnap",
+      "ssh_password": "jsnap",
+      "ssh_wait_timeout": "20m",
+      "http_directory" : "preseeds",
+      "http_port_min" : 9001,
+      "http_port_max" : 9001,
+      "shutdown_command": "echo 'jsnap' | sudo -S shutdown -P now",
+      "vm_name": "webjsnap-virtualbox",
+      "output_directory": "webjsnap-virtualbox",
+      "boot_command": [
+        "<esc><esc><enter><wait>",
+        "/install/vmlinuz noapic ",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg ",
+        "debian-installer=en_US auto locale=en_US kbd-chooser/method=us ",
+        "hostname=webjsnap ",
+        "fb=false debconf/frontend=noninteractive ",
+        "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA ",
+        "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
+        "initrd=/install/initrd.gz -- <enter>"
+      ]
+    },
+    {
       "type": "docker",
       "image": "ubuntu",
       "export_path": "webjsnap-docker.tar"
